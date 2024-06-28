@@ -1,84 +1,74 @@
-import React, {useState} from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import WeatherInfo from "./WeatherInfo";
 import axios from "axios";
 import "./Weather.css";
 
+export default function Weather(props) {
+  const [weatherData, setWeatherData] = useState({ ready: false });
+  const [city, setCity] = useState(props.defaultCity);
 
+  const handleResponse = useCallback((response) => {
+    const now = new Date();
+    const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    const day = daysOfWeek[now.getDay()];
+    const hours = now.getHours().toString().padStart(2, '0');
+    const minutes = now.getMinutes().toString().padStart(2, '0');
+    const formattedTime = `${day} ${hours}:${minutes}`;
+    
+    setWeatherData({
+      ready: true,
+      temperature: response.data.daily[0].temperature.day,
+      humidity: response.data.daily[0].temperature.humidity,
+      date: formattedTime,
+      description: response.data.daily[0].condition.description,
+      iconUrl: response.data.daily[0].condition.icon_url,
+      wind: response.data.daily[0].wind.speed,
+      city: response.data.city
+    });
+  }, []);
 
-
-export default function Weather (props){
-
-    const [weatherData, setWeatherData] = useState({ready: false});
-    const [city, setCity] =useState(props.defaultCity);
-
-    function handleResponse(response) {
-        const date = new Date(response.data.daily[0].time * 1000);
-        const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-        const day = daysOfWeek[date.getDay()];
-        const hours = date.getHours().toString().padStart(2, '0');
-        const minutes = date.getMinutes().toString().padStart(2, '0');
-        const formattedTime = `${day} ${hours}:${minutes}`;
-       
-       
-        setWeatherData({
-            ready:true,
-            temperature:response.data.daily[0].temperature.day,
-            humidity: response.data.daily[0].temperature.humidity,
-            date: formattedTime,
-            description: response.data.daily[0].condition.description,
-            iconUrl: response.data.daily[0].condition.icon_url,
-            wind: response.data.daily[0].wind.speed,
-            city: response.data.city
-             
-
-        });
-    }
-
-
-    function search() {
+  const search = useCallback(() => {
     const apiKey = "bb0741b0aa475cabbe3bbdftd8oa9bfa";
-    let apiUrl =`https://api.shecodes.io/weather/v1/forecast?query=${city}&key=${apiKey}&units=metric`;
+    let apiUrl = `https://api.shecodes.io/weather/v1/forecast?query=${city}&key=${apiKey}&units=metric`;
     axios.get(apiUrl).then(handleResponse);
+  }, [city, handleResponse]);
 
-    }
+  useEffect(() => {
+    search();
+  }, [search]);
 
-    function handleSubmit(event){
-      event.preventDefault();
-      search();
-    }
+  function handleSubmit(event) {
+    event.preventDefault();
+    search();
+  }
 
-    function handleCityChange(event) {
-      setCity(event.target.value);
+  function handleCityChange(event) {
+    setCity(event.target.value);
+  }
 
-    }
-
-    if(weatherData.ready){
-    return(
-    <div className="Weather">
-       
+  if (weatherData.ready) {
+    return (
+      <div className="Weather">
         <form onSubmit={handleSubmit}>
-            <div className="row">
+          <div className="row">
             <div className="col-9">
-            <input type="search" placeholder="Enter a city.." 
-            className="form-control" 
-            autoFocus="on"
-            onChange={handleCityChange} />
+              <input
+                type="search"
+                placeholder="Enter a city.."
+                className="form-control"
+                autoFocus="on"
+                onChange={handleCityChange}
+              />
             </div>
-
             <div className="col-3">
-            <input type="submit" value="Search" 
-            className="btn btn-primary w-100" />
-           </div>
+              <input type="submit" value="Search" className="btn btn-primary w-100" />
             </div>
-         </form>
-      <WeatherInfo date={weatherData}/>
-
-           
-        </div>
-
+          </div>
+        </form>
+        <WeatherInfo data={weatherData} />
+      </div>
     );
-} else {
-  search();
-   return "Loading...";
-}
+  } else {
+    return "Loading...";
+  }
 }
