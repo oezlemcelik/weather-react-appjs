@@ -7,20 +7,19 @@ export default function Weather (){
        
         <form>
             <div className="row">
-                <div className="col-9">
+            <div className="col-9">
             <input type="search" placeholder="Enter a city.." 
-            className="form-control" />
+            className="form-control" autoFocus="on" />
             </div>
 
             <div className="col-3">
             <input type="submit" value="Search" 
-            className="btn btn-primary" />
+            className="btn btn-primary w-100" />
            </div>
             </div>
-        </form>
-    
-    
-        <h1>Vienna</h1>
+         </form>
+   
+           <h1>Vienna</h1>
         <ul>
             <li>
                 Wednesday 09:00
@@ -31,8 +30,11 @@ export default function Weather (){
         </ul>
         <div className="row">
             <div className="col-6"> 
-                <img src="https://ssl.gstatic.com/onebox/weather/64/partly_cloudy.png" 
-                alt=" Mostly Cloudy"/> 27C </div>
+                <img 
+                src="https://ssl.gstatic.com/onebox/weather/64/partly_cloudy.png" 
+                alt="Mostly Cloudy"/>
+                <strong>27</strong>°C 
+                </div>
                 
                 <div className="col-6">
                     <ul>
@@ -48,14 +50,9 @@ export default function Weather (){
                             Wind: 9 km/h
                         </li>
                     </ul>
-
                 </div>
-
-
             </div>
-
         </div>
 
     );
-
 }
