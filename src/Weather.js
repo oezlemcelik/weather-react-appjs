@@ -9,15 +9,22 @@ export default function Weather (props){
 
     function handleResponse(response) {
         console.log(response.data);
+
+        const date = new Date(response.data.daily[0].time * 1000);
+        const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        const day = daysOfWeek[date.getDay()];
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        const formattedTime = `${day} ${hours}:${minutes}`;
         setWeatherData({
             ready:true,
-            temperature: response.data.main.temp,
-            humidity: response.data.main.humidity,
-            date: "Wednesday 09.00",
-            description: response.data.weather[0],
-            iconUrl: "https://ssl.gstatic.com/onebox/weather/64/partly_cloudy.png",
-            wind: response.data.wind.speed,
-            city: response.data.name
+            temperature:response.data.daily[0].temperature.day,
+            humidity: response.data.daily[0].temperature.humidity,
+            date: formattedTime,
+            description: response.data.daily[0].condition.description,
+            iconUrl:"http://shecodes-assets.s3.amazonaws.com/api/weather/icons/rain-day.png",
+            wind: response.data.daily[0].wind.speed,
+            city: response.data.city
              
 
         });
@@ -67,11 +74,11 @@ export default function Weather (props){
 
     );
 } else {
-    const apiKey = "205b1861b21364fef46e46decdc115e4";
-    let apiUrl =`https://api.openweathermap.org/data/2.5/weather?q=${props.defaultCity}&appid=${apiKey}$units=metric`;
+    const apiKey = "bb0741b0aa475cabbe3bbdftd8oa9bfa";
+    let apiUrl =`https://api.shecodes.io/weather/v1/forecast?query=${props.defaultCity}&key=${apiKey}&units=metric`;
     axios.get(apiUrl).then(handleResponse);
+    
 
     return "Loading...";
-
 }
 }
