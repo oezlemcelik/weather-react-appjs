@@ -11,10 +11,10 @@ export default function WeatherInfo(props) {
         </ul>
         <div className="row">
             <div className="col-6"> 
-                <img 
-                src={props.date.iconUrl} 
-                alt={props.date.description}/>
-                <span className="temperature">{Math.round(props.date.temperature)}</span>
+                <img
+                src={props.date.iconUrl ? props.date.iconUrl: "http://shecodes-assets.s3.amazonaws.com/api/weather/icons/rain-day.png"}
+                 alt={props.date.description}/>
+                 <span className="temperature">{Math.round(props.date.temperature)}</span>
                 <span className="unit">°C</span> 
                 </div>
                 
