@@ -14,7 +14,7 @@ export default function Weather(props) {
     const hours = now.getHours().toString().padStart(2, '0');
     const minutes = now.getMinutes().toString().padStart(2, '0');
     const formattedTime = `${day} ${hours}:${minutes}`;
-    
+
     setWeatherData({
       ready: true,
       temperature: response.data.daily[0].temperature.day,
@@ -23,7 +23,12 @@ export default function Weather(props) {
       description: response.data.daily[0].condition.description,
       iconUrl: response.data.daily[0].condition.icon_url,
       wind: response.data.daily[0].wind.speed,
-      city: response.data.city
+      city: response.data.city,
+      forecast: response.data.daily.slice(1, 6).map((day, index) => ({
+        date: daysOfWeek[(now.getDay() + index + 1) % 7],
+        temperature: day.temperature.day,
+        iconUrl: day.condition.icon_url,
+      }))
     });
   }, []);
 
